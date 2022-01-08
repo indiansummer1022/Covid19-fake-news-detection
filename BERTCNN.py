@@ -161,8 +161,12 @@ train_size = len(train)
 val_size = len(val)
 test_size = len(test)
 
+# random split dataset
 #train_dataset, val_dataset, test_dataset = random_split(dataset, [train_size, val_size, test_size],generator=torch.Generator().manual_seed(42))
+
 train_dataset = Subset(dataset,range(train_size))
+# bagging
+bagging = torch.utils.data.RandomSampler(train_dataset, replacement=True, num_samples=train_size, generator=torch.Generator().manual_seed(2020))
 val_dataset = Subset(dataset,range(train_size, train_size+val_size))
 test_dataset = Subset(dataset,range(train_size+val_size,len(dataset)))
 
@@ -203,8 +207,8 @@ the_best_model = torch.load(PATH1,map_location='cpu')
 
 # Initializing model
 model = BertCNNClassifier(the_best_model).cuda()
-# for param in model.bert.parameters():
-#    param.requires_grad = False
+for param in model.bert.parameters():
+   param.requires_grad = False
 
 # set parameters
 epochs = 4
