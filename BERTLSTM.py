@@ -140,25 +140,13 @@ input_ids = torch.cat(input_ids, dim=0)
 attention_masks = torch.cat(attention_masks, dim=0)
 labels = torch.tensor(labels)
 
-# Print sentence 0, now as a list of IDs.
-print('Original: ', tweets[0])
-print('Token IDs:', input_ids[0])
-
-
-# Combine the training inputs into a TensorDataset.
 dataset = TensorDataset(input_ids, attention_masks, labels)
 
-# Create a 80-10-10 train-validation-test split.
+# Split the whole dataset back to origin
 train_size = len(train)
 val_size = len(val)
 test_size = len(test)
-
-# random split dataset
-#train_dataset, val_dataset, test_dataset = random_split(dataset, [train_size, val_size, test_size],generator=torch.Generator().manual_seed(42))
-
 train_dataset = Subset(dataset,range(train_size))
-# bagging
-bagging = torch.utils.data.RandomSampler(train_dataset, replacement=True, num_samples=train_size, generator=torch.Generator().manual_seed(256))
 val_dataset = Subset(dataset,range(train_size, train_size+val_size))
 test_dataset = Subset(dataset,range(train_size+val_size,len(dataset)))
 
@@ -209,7 +197,7 @@ criterion = nn.CrossEntropyLoss()
 import random
 import numpy as np
 
-seed_val = 2020
+seed_val = 42
 
 random.seed(seed_val)
 torch.manual_seed(seed_val)
